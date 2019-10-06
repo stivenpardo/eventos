@@ -1,13 +1,13 @@
 var express = require('express');
 var bodyParser = require('body-parser')
-const eventos = require("./datos.js")
-var  connect = require("./connect/connect.js")
+const eventos = require("./datos")
+var  connect = require("./connect/connect")
 var app = express();
 var MyConnect = new connect("eventos")
+app.use('/',express.static(__dirname + '/public')) //el __dirname es una varible del sistema
 let ev = new eventos(MyConnect.getConnect())
 // create application/json parser 
 var jsonParser = bodyParser.json()
-app.use('/',express.static(__dirname + '/public')) //el __dirname es una varible del sistema
 
 app.get('/', function (req, res) {
   res.send('Hello World!');
@@ -42,20 +42,21 @@ app.delete('/eventos/:id',(req,res)=>{
 	res.send(resp)
 });
 
-app.listen(3000, function () {
-  console.log('Example app listening on port 3000!');
+app.get('/inscription',(req,res)=>{
+	let gInscripcion = ev.getInscripcion()
+	gInscripcion.then(resp =>{
+		res.send(resp)
+	})
 });
 
-app.get('/eventos/inscripcion/:name',(req,res)=>{
+app.get('/eventos/inscription/:name',(req,res)=>{
 	let gInscription = ev.getInscripcionByName(req.params.name)
 	gInscription.then(resp=>{
 		res.send(resp)
 	})
 });
 
-app.get('/eventos/inscripcion',(req,res)=>{
-	let getInscripcion = ev.getInscripcion()
-	getInscripcion.then(resp=>{
-		res.send(resp)
-	})
+
+app.listen(3000, function () {
+  console.log('Example app listening on port 3000!');
 });
